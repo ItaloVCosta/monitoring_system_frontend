@@ -26,8 +26,11 @@ Start by cloning the repository to your local machine.
 ```bash
 git clone https://github.com/ItaloVCosta/monitoring_system_frontend.git
 ```
+### 2. Update .env file
 
-### 2. Run Docker Compose
+Update the .env files with the environment variables.
+
+### 3. Run Docker Compose
 
 To build and start the application using Docker Compose, run the following command in the root directory of the project:
 
@@ -40,9 +43,9 @@ This command will:
 - Set up all the necessary containers (frontend and backend if necessary).
 - Serve the React application.
 
-Once Docker has built the application, the frontend will be accessible at [http://localhost:3000](http://localhost:3000).
+Once Docker has built the application, the frontend will be accessible at [http://localhost:3000](http://localhost:3000). Remember of include .env variables, and when .env is changed, the container need to be restarted.
 
-### 3. Stop the Application
+### 4. Stop the Application
 
 To stop the Docker containers, press `CTRL+C` in the terminal where the application is running or use the following command in another terminal:
 

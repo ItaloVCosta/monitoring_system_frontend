@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FiMoreVertical } from "react-icons/fi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import ApiManager from "../ApiManager/ApiManager";
 
 const ServerCard = ({
