@@ -78,6 +78,7 @@ function App() {
             {filteredServers?.map((server) => (
               <ServerCard
                 key={server.id}
+                serverId={server.id}
                 name={server.name}
                 ip={server.ip_address}
                 status={server.status}
