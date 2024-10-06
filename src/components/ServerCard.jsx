@@ -17,8 +17,8 @@ const ServerCard = ({ name, ip, status, cpuUsage, memoryUsage }) => {
 
       <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
         <span className="text-sm text-gray-400">IP: {ip}</span>
-        <span className="text-sm text-gray-400">CPU: {cpuUsage}%</span>
-        <span className="text-sm text-gray-400">Memory: {memoryUsage}%</span>
+        <span className="text-sm text-gray-400">CPU: {cpuUsage ?? '- '}%</span>
+        <span className="text-sm text-gray-400">Memory: {memoryUsage ?? '- '}%</span>
       </div>
 
       <div

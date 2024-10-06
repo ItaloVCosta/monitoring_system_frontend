@@ -7,13 +7,15 @@ import React, { useState, useMemo } from "react";
 import { CiServer } from "react-icons/ci";
 import { useQuery, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import LoadingSpinner from "./components/LoadingSpinner";
+import NewServerMolda from "./components/NewServerMolda";
 
 function App() {
   const [selectedOption, setSelectedOption] = useState("All Servers");
   const [searchText, setSearchText] = useState("");
+  const [openNewServerModal, setOpenNewServerModal] = useState(false);
 
   const { data: servers, isLoading, error } = useQuery({
-    queryKey: ["todos"],
+    queryKey: ["ServerAll"],
     queryFn: ApiManager.getServers,
   });
 
@@ -55,7 +57,8 @@ function App() {
             />
           </div>
           <div className="flex justify-end w-full md:w-auto">
-            <button className="bg-slate-700 text-gray-300 rounded-md p-2 flex items-center space-x-2 hover:bg-slate-600 ml-auto">
+            <button className="bg-slate-700 text-gray-300 rounded-md p-2 flex items-center space-x-2 hover:bg-slate-600 ml-auto"
+            onClick={ () => setOpenNewServerModal((state) => !state)}>
               <CiServer />
               <span>Create Server</span>
             </button>
@@ -85,7 +88,12 @@ function App() {
           </div>
         )}
       </div>
+      <NewServerMolda
+        triggerModal={openNewServerModal}
+        setState={setOpenNewServerModal}
+      />
     </div>
+
   );
 }
 
