@@ -1,11 +1,11 @@
 import ApiManager from "./ApiManager/ApiManager";
 import "./App.css";
-import Dropdown from "./components/DropDown";
+import Dropdown from "./components/Dropdown";
 import SearchInput from "./components/SearchInput";
 import ServerCard from "./components/ServerCard";
 import React, { useState, useMemo } from "react";
 import { CiServer } from "react-icons/ci";
-import { useQuery, QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "./components/LoadingSpinner";
 import NewServerModal from "./components/NewServerModal";
 
