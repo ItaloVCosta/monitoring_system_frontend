@@ -23,6 +23,10 @@ To run the frontend application, follow the steps below:
 
 Start by cloning the repository to your local machine.
 
+```bash
+git clone https://github.com/ItaloVCosta/monitoring_system_frontend.git
+```
+
 ### 2. Run Docker Compose
 
 To build and start the application using Docker Compose, run the following command in the root directory of the project:
