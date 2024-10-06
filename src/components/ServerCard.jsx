@@ -1,40 +1,56 @@
 import React, { useState } from "react";
 import { FiMoreVertical } from "react-icons/fi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 import ApiManager from "../ApiManager/ApiManager";
 
-const ServerCard = ({ serverId,name, ip, status, cpuUsage, memoryUsage }) => {
+const ServerCard = ({
+  serverId,
+  name,
+  ip,
+  status,
+  cpuUsage,
+  memoryUsage,
+  is_monitored,
+  setNewServerModalState,
+  onEdit,
+}) => {
   const [showOptions, setShowOptions] = useState(false);
 
   const toggleOptions = () => {
-    setShowOptions(!showOptions);
+    setShowOptions( (showOptions) => !showOptions);
   };
 
   const queryClient = useQueryClient();
-  const { mutate } = useMutation({
+  const { mutate: mutateDelete } = useMutation({
     mutationFn: (serverid) => ApiManager.deleteServer(serverid),
     onSuccess: () => {
       queryClient.invalidateQueries("ServerAll");
       toast.success("Server deleted successfully!");
-      toast.remove('Loading');
+      toast.remove("Loading");
       setShowOptions(false);
     },
     onError: (error) => {
       toast.error(`Failed to delete server: ${error}`);
-      toast.remove('Loading');
+      toast.remove("Loading");
       setShowOptions(false);
     },
-    onMutate: () =>{
-        toast.loading('Loading...',{
-            id: 'Loading',
-          });
-    }
+    onMutate: () => {
+      toast.loading("Loading...", {
+        id: "Loading",
+      });
+    },
   });
 
-  const handleDelete = () =>{
-    mutate(serverId)
-  }
+  const handleEdit = () => {
+    setNewServerModalState(true);
+    onEdit({ serverId, name, ip, status, is_monitored });
+    setShowOptions(false);
+  };
+
+  const handleDelete = () => {
+    mutateDelete(serverId);
+  };
 
   return (
     <div className="bg-slate-800 text-white rounded-lg p-4 flex items-center justify-between shadow-lg flex-col sm:flex-row border-2 border-slate-700 mt-2 relative">
@@ -85,7 +101,7 @@ const ServerCard = ({ serverId,name, ip, status, cpuUsage, memoryUsage }) => {
             <div className="absolute right-0 mt-2 w-28 bg-white rounded-md shadow-lg z-50">
               <button
                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                onClick={() => console.log("Edit clicked")}
+                onClick={handleEdit}
               >
                 Edit
               </button>

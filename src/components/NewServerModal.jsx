@@ -1,46 +1,83 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ApiManager from "../ApiManager/ApiManager";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 
-const NewServerMolda = ({ triggerModal: isOpen, setState: setIsOpen }) => {
+const NewServerModal = ({ triggerModal: isOpen, setState: setIsOpen, server }) => {
+  const [formData, setFormData] = useState({
+    server_name: "",
+    ip_address: "",
+    status: 0,
+    is_monitored: 0,
+  });
+  console.log(formData)
+  useEffect(() => {
+    if (server) {
+      setFormData({
+        server_name: server.name,
+        ip_address: server.ip,
+        status: server.status,
+        is_monitored: server.is_monitored,
+      });
+    }
+  }, [server]);
+
   const toggleModal = () => {
+    setFormData({
+      server_name: "",
+      ip_address: "",
+      status: 0,
+      is_monitored: 0,
+    });
     setIsOpen((state) => !state);
   };
+
   const queryClient = useQueryClient();
   const { isLoading, mutate } = useMutation({
-    mutationFn: (serverData) => ApiManager.createServer(serverData),
+    mutationFn: (serverData) => {
+      if (server) {
+        return ApiManager.updateServer(server.serverId, serverData);
+      }
+      return ApiManager.createServer(serverData);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries("ServerAll");
-      toast.success("Server created successfully!");
-      toast.remove('Loading');
+      toast.success(server ? "Server updated successfully!" : "Server created successfully!");
+      toast.remove("Loading");
       setIsOpen(false);
+      setFormData({
+        server_name: "",
+        ip_address: "",
+        status: 0,
+        is_monitored: 0,
+      });
     },
     onError: (error) => {
-      toast.error(`Failed to create server: ${error}`);
-      toast.remove('Loading');
+      toast.error(`Failed to ${server ? "update" : "create"} server: ${error}`);
+      toast.remove("Loading");
+      
     },
-    onMutate: () =>{
-        toast.loading('Loading...',{
-            id: 'Loading',
-          });
-    }
+    onMutate: () => {
+      toast.loading("Loading...", {
+        id: "Loading",
+      });
+    },
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = {
-        name: e.target.server_name.value,
-        ip_address: e.target.ip_address.value,
-        status: e.target.status.checked? 1: 0 ,
-        is_monitored: e.target.is_monitored.checked? 1: 0 ,
+      name: e.target.server_name.value,
+      ip_address: e.target.ip_address.value,
+      status: e.target.status.checked ? 1 : 0,
+      is_monitored: e.target.is_monitored.checked ? 1 : 0,
     };
     mutate(formData);
   };
 
   return (
     <div>
-    <Toaster />
+      <Toaster />
       {isOpen && (
         <div
           id="crud-modal"
@@ -52,7 +89,7 @@ const NewServerMolda = ({ triggerModal: isOpen, setState: setIsOpen }) => {
             <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
               <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Create New Server
+                  {server ? "Edit Server" : "Create New Server"}
                 </h3>
                 <button
                   type="button"
@@ -90,6 +127,8 @@ const NewServerMolda = ({ triggerModal: isOpen, setState: setIsOpen }) => {
                       type="text"
                       name="server_name"
                       id="server_name"
+                      value={formData.server_name}
+                      onChange={(e) => setFormData({ ...formData, server_name: e.target.value })}
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="Type server name"
                       required
@@ -107,6 +146,8 @@ const NewServerMolda = ({ triggerModal: isOpen, setState: setIsOpen }) => {
                       type="text"
                       name="ip_address"
                       id="ip_address"
+                      value={formData.ip_address}
+                      onChange={(e) => setFormData({ ...formData, ip_address: e.target.value })}
                       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="Type server IP address"
                       required
@@ -118,6 +159,8 @@ const NewServerMolda = ({ triggerModal: isOpen, setState: setIsOpen }) => {
                       id="is_monitored"
                       name="is_monitored"
                       type="checkbox"
+                      checked={formData.is_monitored}
+                      onChange={(e) => setFormData({ ...formData, is_monitored: e.target.checked })}
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     />
                     <label
@@ -133,6 +176,8 @@ const NewServerMolda = ({ triggerModal: isOpen, setState: setIsOpen }) => {
                       id="status"
                       name="status"
                       type="checkbox"
+                      checked={formData.status}
+                      onChange={(e) => setFormData({ ...formData, status: e.target.checked })}
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     />
                     <label
@@ -149,19 +194,7 @@ const NewServerMolda = ({ triggerModal: isOpen, setState: setIsOpen }) => {
                     type="submit"
                     className="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-auto"
                   >
-                    <svg
-                      className="me-1 -ms-1 w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                        clipRule="evenodd"
-                      ></path>
-                    </svg>
-                    Create
+                    {isLoading ? "Saving..." : server ? "Update" : "Create"}
                   </button>
                 </div>
               </form>
@@ -173,4 +206,4 @@ const NewServerMolda = ({ triggerModal: isOpen, setState: setIsOpen }) => {
   );
 };
 
-export default NewServerMolda;
+export default NewServerModal;

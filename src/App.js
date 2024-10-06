@@ -7,12 +7,13 @@ import React, { useState, useMemo } from "react";
 import { CiServer } from "react-icons/ci";
 import { useQuery, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import LoadingSpinner from "./components/LoadingSpinner";
-import NewServerMolda from "./components/NewServerMolda";
+import NewServerModal from "./components/NewServerModal";
 
 function App() {
   const [selectedOption, setSelectedOption] = useState("All Servers");
   const [searchText, setSearchText] = useState("");
   const [openNewServerModal, setOpenNewServerModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const { data: servers, isLoading, error } = useQuery({
     queryKey: ["ServerAll"],
@@ -83,15 +84,19 @@ function App() {
                 ip={server.ip_address}
                 status={server.status}
                 memoryUsage={server.memory_usage}
+                is_monitored={server.is_monitored}
                 cpuUsage={server.cpu_usage}
+                setNewServerModalState={setOpenNewServerModal}
+                onEdit ={setIsEditing}
               />
             ))}
           </div>
         )}
       </div>
-      <NewServerMolda
+      <NewServerModal
         triggerModal={openNewServerModal}
         setState={setOpenNewServerModal}
+        server={isEditing}
       />
     </div>
 
