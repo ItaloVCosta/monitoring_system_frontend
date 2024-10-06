@@ -3,7 +3,7 @@ import ApiManager from "../ApiManager/ApiManager";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast, { Toaster } from "react-hot-toast";
 
-const NewServerModal = ({ triggerModal: isOpen, setState: setIsOpen, server }) => {
+const NewServerModal = ({ triggerModal: isOpen, setState: setIsOpen, server, setServer }) => {
   const [formData, setFormData] = useState({
     server_name: "",
     ip_address: "",
@@ -29,6 +29,7 @@ const NewServerModal = ({ triggerModal: isOpen, setState: setIsOpen, server }) =
       status: 0,
       is_monitored: 0,
     });
+    console.log(formData);
     setIsOpen((state) => !state);
   };
 
@@ -51,10 +52,12 @@ const NewServerModal = ({ triggerModal: isOpen, setState: setIsOpen, server }) =
         status: 0,
         is_monitored: 0,
       });
+      setServer(false);
     },
     onError: (error) => {
       toast.error(`Failed to ${server ? "update" : "create"} server: ${error}`);
       toast.remove("Loading");
+      setServer(false);
       
     },
     onMutate: () => {

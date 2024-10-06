@@ -38,7 +38,7 @@ function App() {
         (selectedOption === "Inactive Servers" && server.status === 0);
 
       return matchesSearchText && matchesStatus;
-    });
+    }).sort((a, b) => a.name.localeCompare(b.name));
   }, [servers, searchText, selectedOption]);
 
   return (
@@ -97,6 +97,7 @@ function App() {
         triggerModal={openNewServerModal}
         setState={setOpenNewServerModal}
         server={isEditing}
+        setServer={ setIsEditing}
       />
     </div>
 
